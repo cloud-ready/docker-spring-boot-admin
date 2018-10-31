@@ -1,0 +1,37 @@
+version: '2.1'
+services:
+  base-spring-boot-admin:
+    command: []
+
+
+
+    environment:
+    #- EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:-http://user:user_pass@standalone.eureka:8761/eureka/}
+    - EUREKA_INSTANCE_NONSECUREPORT=${EUREKA_INSTANCE_NONSECUREPORT:-1111}
+    - HOST_IPADDRESS=${HOST_IPADDRESS}
+    - JAVA_DEBUG_PORT=${JAVA_DEBUG_PORT:-}
+    - JAVA_OPTS=${JAVA_OPTS:-}
+    - LOGGING_LEVEL_ROOT=${LOGGING_LEVEL_ROOT:-INFO}
+    #- LOGSTASH_DESTINATION=${LOGSTASH_DESTINATION}
+    - SERVER_PORT=${SERVER_PORT:-1111}
+    #- SPRING_CLOUD_CONFIG_LABEL=${SPRING_CLOUD_CONFIG_LABEL}
+    #- SPRING_CLOUD_CONFIG_PASSWORD=${SPRING_CLOUD_CONFIG_PASSWORD}
+    #- SPRING_CLOUD_CONFIG_USERNAME=${SPRING_CLOUD_CONFIG_USERNAME}
+    #- SPRING_CLOUD_CONSUL_ENABLED=${SPRING_CLOUD_CONSUL_ENABLED:-false}
+    #- SPRING_CLOUD_CONSUL_HOST=${SPRING_CLOUD_CONSUL_HOST}
+    #- SPRING_CLOUD_CONSUL_PORT=${SPRING_CLOUD_CONSUL_PORT}
+    - SPRING_CLOUD_INETUTILS_PREFERREDNETWORKS=${SPRING_CLOUD_INETUTILS_PREFERREDNETWORKS}
+    - SPRING_CLOUD_INETUTILS_IGNOREDINTERFACES=${SPRING_CLOUD_INETUTILS_IGNOREDINTERFACES}
+    #- SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-develop.env,port_nonsecure}
+    image: ${IMAGE_PREFIX:-@docker.image.prefix@}spring-boot-admin:${IMAGE_TAG:-@project.version@}
+    labels:
+      deploy.config.commit: ${LABEL_DEPLOY_CONFIG_COMMIT:-unknown}
+      deploy.config.name: ${LABEL_DEPLOY_CONFIG_NAME:-unknown}
+      deploy.config.ref: ${LABEL_DEPLOY_CONFIG_REF:-unknown}
+      deploy.util.commit: ${LABEL_DEPLOY_UTIL_COMMIT:-unknown}
+      deploy.util.ref: ${LABEL_DEPLOY_UTIL_REF:-unknown}
+      instance.name: ${LABEL_INSTANCE_NAME:-127.0.0.1/spring-boot-admin/standalone}
+      instance.name.short: ${LABEL_INSTANCE_NAME_SHORT:-standalone.spring-boot-admin}
+    ports:
+    - "${EUREKA_INSTANCE_NONSECUREPORT:-1111}:${SERVER_PORT:-1111}"
+    restart: always

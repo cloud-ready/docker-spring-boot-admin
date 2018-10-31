@@ -1,0 +1,45 @@
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:INFO}
+
+security: # spring-boot 1.x security properties
+  basic.enabled: ${SPRING_SECURITY_ENABLED:true}
+  user:
+    name: ${SPRING_SECURITY_USER_NAME:admin}
+    password: ${SPRING_SECURITY_USER_PASSWORD:admin_pass}
+    role: ${SPRING_SECURITY_USER_ROLES:ACTUATOR, ADMIN, SUPERUSER, USER}
+
+spring:
+  application.name: spring-boot-admin
+  security: # spring-boot 2.x security properties
+    enabled: ${SPRING_SECURITY_ENABLED:true} # see: https://github.com/spring-projects/spring-boot/issues/12323
+    user:
+      name: ${SPRING_SECURITY_USER_NAME:admin}
+      password: ${SPRING_SECURITY_USER_PASSWORD:admin_pass}
+      roles: ${SPRING_SECURITY_USER_ROLES:ACTUATOR, ADMIN, SUPERUSER, USER}
+
+server.port: ${SERVER_PORT:1111}
+
+management:
+  # spring-boot 1.x management properties
+  context-path: ${MANAGEMENT_CONTEXTPATH:/}
+  security:
+    enabled: true
+    roles: ACTUATOR # no ROLE_ prefix here
+
+  # spring-boot 2.x management properties
+  endpoint:
+    shutdown.enabled: ${MANAGEMENT_ENDPOINT_SHUTDOWN_ENABLED:true}
+    health:
+      show-details: ${MANAGEMENT_ENDPOINT_HEALTH_SHOWDETAILS:WHEN_AUTHORIZED}
+      roles: ${MANAGEMENT_ENDPOINT_HEALTH_ROLES:ACTUATOR}
+  endpoints:
+    web:
+      base-path: ${MANAGEMENT_ENDPOINTS_WEB_BASEPATH:/}
+      exposure:
+        include: "${MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE:*}"
+        exclude: "${MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_EXCLUDE:}"
+
+spring.boot.admin:
+  ui.title: ${SPRING_BOOT_ADMIN_TITLE:Spring Boot Admin}
