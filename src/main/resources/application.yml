@@ -1,29 +1,34 @@
+# see: https://github.com/codecentric/spring-boot-admin/tree/1.5.x/spring-boot-admin-samples/spring-boot-admin-sample-eureka
+eureka:
+  client:
+    enabled: ${EUREKA_CLIENT_ENABLED:true}
+    #registryFetchIntervalSeconds: 5
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://user:user_pass@standalone.eureka:8761/eureka/}
+    register-with-eureka: ${EUREKA_CLIENT_REGISTERWITHEUREKA:true}
+  instance:
+    # eureka.instance.hostname affect Status->instances's url href (not text) value on dashboard
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress}}}}}
+    lease-renewal-interval-in-seconds: 10
+    metadataMap:
+      user.name: ${SPRING_SECURITY_USER_NAME:admin}
+      user.password: ${SPRING_SECURITY_USER_PASSWORD:admin_pass}
+      management.port: ${SERVER_PORT:1111}
+      management.context-path: ${spring.boot.admin.discovery.converter.management-context-path:}
+      health.path: ${spring.boot.admin.discovery.converter.health-endpoint-path:health}
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFERIPADDRESS:false}
 
 logging:
+  file: logs/spring.log
   level:
     root: ${LOGGING_LEVEL_ROOT:INFO}
 
-security: # spring-boot 1.x security properties
-  basic.enabled: ${SPRING_SECURITY_ENABLED:true}
-  user:
-    name: ${SPRING_SECURITY_USER_NAME:admin}
-    password: ${SPRING_SECURITY_USER_PASSWORD:admin_pass}
-    role: ${SPRING_SECURITY_USER_ROLES:ACTUATOR, ADMIN, SUPERUSER, USER}
-
-spring:
-  application.name: spring-boot-admin
-  security: # spring-boot 2.x security properties
-    enabled: ${SPRING_SECURITY_ENABLED:true} # see: https://github.com/spring-projects/spring-boot/issues/12323
-    user:
-      name: ${SPRING_SECURITY_USER_NAME:admin}
-      password: ${SPRING_SECURITY_USER_PASSWORD:admin_pass}
-      roles: ${SPRING_SECURITY_USER_ROLES:ACTUATOR, ADMIN, SUPERUSER, USER}
-
-server.port: ${SERVER_PORT:1111}
+endpoints.health.sensitive: false
+endpoints.info.sensitive: false
 
 management:
   # spring-boot 1.x management properties
-  context-path: ${MANAGEMENT_CONTEXTPATH:/}
+  context-path: ${MANAGEMENT_CONTEXTPATH:/actuator}
   security:
     enabled: true
     roles: ACTUATOR # no ROLE_ prefix here
@@ -36,10 +41,75 @@ management:
       roles: ${MANAGEMENT_ENDPOINT_HEALTH_ROLES:ACTUATOR}
   endpoints:
     web:
-      base-path: ${MANAGEMENT_ENDPOINTS_WEB_BASEPATH:/}
+      base-path: ${MANAGEMENT_ENDPOINTS_WEB_BASEPATH:/actuator}
       exposure:
         include: "${MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE:*}"
         exclude: "${MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_EXCLUDE:}"
 
-spring.boot.admin:
-  ui.title: ${SPRING_BOOT_ADMIN_TITLE:Spring Boot Admin}
+security: # spring-boot 1.x security properties
+  basic.enabled: ${SPRING_SECURITY_ENABLED:true}
+  user:
+    name: ${SPRING_SECURITY_USER_NAME:admin}
+    password: ${SPRING_SECURITY_USER_PASSWORD:admin_pass}
+    role: ${SPRING_SECURITY_USER_ROLES:ACTUATOR, ADMIN, SUPERUSER, USER}
+
+server.port: ${SERVER_PORT:1111}
+
+spring:
+  aop.auto: true
+  application.name: ${SPRING_APPLICATION_NAME:spring-boot-admin}
+  boot.admin:
+    client:
+      metadata:
+        user:
+          name: ${security.user.name:${spring.security.user.name:${SPRING_SECURITY_USER_NAME:admin}}}
+          password: ${security.user.password:${spring.security.user.password:${SPRING_SECURITY_USER_PASSWORD:admin_pass}}}
+    discovery:
+      converter:
+        management-context-path: ${management.endpoints.web.base-path:${management.context-path:/actuator}}
+        health-endpoint-path: "health"
+      enabled: true
+      ignored-services:
+      services: "*"
+    monitor:
+      period: 10000
+      status-lifetime: 10000
+    notify.mail.to: admin@example.com
+    routes.endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream,turbine.stream
+    turbine:
+      clusters: default
+      location: ${SPRING_APPLICATION_NAME:spring-boot-admin}
+    ui.title: ${SPRING_BOOT_ADMIN_TITLE:Spring Boot Admin}
+    url: http://localhost:${server.port:${SERVER_PORT:1111}}
+    username: admin
+    password: admin_pass
+  cloud:
+    config:
+      enabled: false
+  jackson.serialization.indent_output: true
+  security: # spring-boot 2.x security properties
+    enabled: ${SPRING_SECURITY_ENABLED:true} # see: https://github.com/spring-projects/spring-boot/issues/12323
+    user:
+      name: ${SPRING_SECURITY_USER_NAME:admin}
+      password: ${SPRING_SECURITY_USER_PASSWORD:admin_pass}
+      roles: ${SPRING_SECURITY_USER_ROLES:ACTUATOR, ADMIN, SUPERUSER, USER}
+
+turbine:
+  appConfig: ${TURBINE_APPCONFIG:spring-boot-admin}
+  clusterNameExpression: ${TURBINE_CLUSTERNAMEEXPRESSION:new String("default")}
+  combineHostPort: ${TURBINE_COMBINEHOSTPORT:true}
+
+
+---
+spring.profiles: mail
+
+available:
+  application.yml#mail: true
+
+location: docker-spring-boot-admin/application.yml#mail
+
+spring:
+  mail:
+    host: ${SPRING_MAIL_HOST:smtp.example.com}
+    password: ${SPRING_MAIL_PASSWORD:smtp_user_pass}
+    username: ${SPRING_MAIL_USERNAME:smtp_user}
