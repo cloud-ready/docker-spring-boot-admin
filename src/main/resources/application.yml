@@ -18,13 +18,27 @@ eureka:
       health.path: ${spring.boot.admin.discovery.converter.health-endpoint-path:health}
     prefer-ip-address: ${EUREKA_INSTANCE_PREFERIPADDRESS:false}
 
+flyway:
+  locations: classpath:/db
+
+liquibase:
+  enabled: true
+  change-log: classpath:/db/changelog/db.changelog-master.xml
+
 logging:
   file: logs/spring.log
   level:
     root: ${LOGGING_LEVEL_ROOT:INFO}
 
-endpoints.health.sensitive: false
-endpoints.info.sensitive: false
+endpoints:
+  health.sensitive: true
+  info.sensitive: true
+  refresh:
+    enabled: true
+  restart:
+    enabled: true
+  shutdown:
+    enabled: true
 
 management:
   # spring-boot 1.x management properties
@@ -59,11 +73,21 @@ spring:
   aop.auto: true
   application.name: ${SPRING_APPLICATION_NAME:spring-boot-admin}
   boot.admin:
+    api-path: "api/applications"
+    auto-deregistration: false
+    auto-registration: true
     client:
+      enabled: true
+      #health-url:
+      #management-url:
       metadata:
         user:
           name: ${security.user.name:${spring.security.user.name:${SPRING_SECURITY_USER_NAME:admin}}}
           password: ${security.user.password:${spring.security.user.password:${SPRING_SECURITY_USER_PASSWORD:admin_pass}}}
+      name: ${spring.application.name}
+      prefer-ip: false
+      #service-base-url:
+      #service-url:
     discovery:
       converter:
         management-context-path: ${management.endpoints.web.base-path:${management.context-path:/actuator}}
@@ -71,22 +95,44 @@ spring:
       enabled: true
       ignored-services:
       services: "*"
+    hazelcast:
+      application-store: "spring-boot-admin-application-store"
+      enabled: true
+      event-store: "spring-boot-admin-event-store"
     monitor:
       period: 10000
       status-lifetime: 10000
-    notify.mail.to: admin@example.com
-    routes.endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream,turbine.stream
+    notify:
+      mail:
+        #cc:
+        enabled: false
+        #from:
+        ignore-changes: "UNKNOWN:UP"
+        subject: "#{application.name} (#{application.id}) is #{to.status}"
+        text: "#{application.name} (#{application.id})\nstatus changed from #{from.status} to #{to.status}\n\n#{application.healthUrl}"
+        to: "root@localhost"
+    period: 100000
+    register-once: true
+    routes.endpoints: activiti,env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream,turbine.stream
     turbine:
       clusters: default
+      enabled: true
       location: ${SPRING_APPLICATION_NAME:spring-boot-admin}
-    ui.title: ${SPRING_BOOT_ADMIN_TITLE:Spring Boot Admin}
-    url: http://localhost:${server.port:${SERVER_PORT:1111}}
+    ui:
+      title: ${SPRING_BOOT_ADMIN_TITLE:Spring Boot Admin}
+    url: http://localhost:${server.port:${SERVER_PORT:1111}} # comma split if there are multiple servers
     username: admin
     password: admin_pass
   cloud:
     config:
       enabled: false
+  datasource:
+    driver-class-name: "org.h2.Driver"
+    password:
+    username: sa
+    url: "jdbc:h2:file:/tmp/h2db/h2_database"
   jackson.serialization.indent_output: true
+  h2.console.enabled: true
   security: # spring-boot 2.x security properties
     enabled: ${SPRING_SECURITY_ENABLED:true} # see: https://github.com/spring-projects/spring-boot/issues/12323
     user:
@@ -109,6 +155,9 @@ available:
 location: docker-spring-boot-admin/application.yml#mail
 
 spring:
+  boot.admin:
+    notify:
+      mail.enabled: true
   mail:
     host: ${SPRING_MAIL_HOST:smtp.example.com}
     password: ${SPRING_MAIL_PASSWORD:smtp_user_pass}

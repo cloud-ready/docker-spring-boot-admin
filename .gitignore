@@ -19,6 +19,8 @@ buildNumber.properties
 *.asc
 git.properties
 
+/logs
+
 **/src/site/markdown/README.md
 **/src/site/markdown/src/readme
 **/src/site/resources
