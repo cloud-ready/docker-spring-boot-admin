@@ -18,3 +18,8 @@ curl -i -u user:user_pass -H "Content-Type: application/json" -d '{"action" : "c
 
 see: https://spring.io/blog/2015/03/08/getting-started-with-activiti-and-spring-boot
 see: https://www.baeldung.com/spring-activiti
+
+Say hello process
+```bash
+curl -i -u user:user_pass -H "Content-Type: application/json" http://localhost:8080/start-process
+```

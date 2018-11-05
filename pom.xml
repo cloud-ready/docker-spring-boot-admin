@@ -64,7 +64,8 @@
     </modules>
 
     <properties>
-        <activiti.version>5.19.0.2</activiti.version>
+        <!--<activiti.version>5.19.0.2</activiti.version>-->
+        <activiti.version>6.0.0</activiti.version>
 
         <docker.image.prefix>cloudready/</docker.image.prefix>
 
