@@ -11,9 +11,9 @@ eureka:
     hostname: ${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress}}}}}
     lease-renewal-interval-in-seconds: 10
     metadataMap:
-      user.name: ${SPRING_SECURITY_USER_NAME:admin}
-      user.password: ${SPRING_SECURITY_USER_PASSWORD:admin_pass}
-      management.port: ${SERVER_PORT:1111}
+      user.name: ${security.user.name:${spring.security.user.name}}
+      user.password: ${security.user.password:${spring.security.user.password}}
+      management.port: ${server.port}
       management.context-path: ${spring.boot.admin.discovery.converter.management-context-path:}
       health.path: ${spring.boot.admin.discovery.converter.health-endpoint-path:health}
     prefer-ip-address: ${EUREKA_INSTANCE_PREFERIPADDRESS:false}
@@ -26,7 +26,7 @@ liquibase:
   change-log: classpath:/db/changelog/db.changelog-master.xml
 
 logging:
-  file: logs/spring.log
+  file: ${LOGGING_FILE:logs/spring.log}
   level:
     root: ${LOGGING_LEVEL_ROOT:INFO}
 
@@ -71,7 +71,7 @@ server.port: ${SERVER_PORT:1111}
 
 spring:
   aop.auto: true
-  application.name: ${SPRING_APPLICATION_NAME:spring-boot-admin}
+  application.name: ${SPRING_APPLICATION_NAME:spring-boot-admin-server}
   boot.admin:
     api-path: "api/applications"
     auto-deregistration: false
@@ -117,7 +117,7 @@ spring:
     turbine:
       clusters: default
       enabled: true
-      location: ${SPRING_APPLICATION_NAME:spring-boot-admin}
+      location: ${SPRING_BOOT_ADMIN_TURBINE_LOCATION:${spring.application.name}}
     ui:
       title: ${SPRING_BOOT_ADMIN_TITLE:Spring Boot Admin}
     url: http://localhost:${server.port:${SERVER_PORT:1111}} # comma split if there are multiple servers
@@ -130,7 +130,7 @@ spring:
     driver-class-name: "org.h2.Driver"
     password:
     username: sa
-    url: "jdbc:h2:file:/tmp/h2db/h2_database"
+    url: "jdbc:h2:file:/tmp/h2db/spring-boot-admin-server/h2_database"
   jackson.serialization.indent_output: true
   h2.console.enabled: true
   security: # spring-boot 2.x security properties
@@ -141,7 +141,7 @@ spring:
       roles: ${SPRING_SECURITY_USER_ROLES:ACTUATOR, ADMIN, SUPERUSER, USER}
 
 turbine:
-  appConfig: ${TURBINE_APPCONFIG:spring-boot-admin}
+  appConfig: ${TURBINE_APPCONFIG:${spring.application.name}}
   clusterNameExpression: ${TURBINE_CLUSTERNAMEEXPRESSION:new String("default")}
   combineHostPort: ${TURBINE_COMBINEHOSTPORT:true}
 
@@ -152,7 +152,7 @@ spring.profiles: mail
 available:
   application.yml#mail: true
 
-location: docker-spring-boot-admin/application.yml#mail
+location: spring-boot-admin-server/application.yml#mail
 
 spring:
   boot.admin:

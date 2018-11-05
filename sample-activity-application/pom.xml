@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>sample-activity-application</artifactId>
+    <description>Sample Activity Application</description>
+    <name>Sample Activity Application</name>
+    <packaging>jar</packaging>
+    <parent>
+        <groupId>top.infra</groupId>
+        <artifactId>docker-spring-boot-admin</artifactId>
+        <version>1.5.7</version>
+    </parent>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+            </plugins>
+        </pluginManagement>
+        <!-- @formatter:off -->
+        <plugins>
+            <plugin><artifactId>maven-deploy-plugin</artifactId><configuration><skip>true</skip></configuration></plugin>
+            <plugin><artifactId>maven-javadoc-plugin</artifactId><configuration><attach>false</attach></configuration></plugin>
+            <plugin><artifactId>maven-source-plugin</artifactId><configuration><attach>false</attach></configuration></plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <configuration>
+                    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}.RELEASE</version>
+                <configuration>
+                    <classifier>exec</classifier>
+                    <layout>ZIP</layout>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-info</goal>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration><attach>false</attach></configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <configuration>
+                    <repository>${docker.image.prefix}spring-boot-admin</repository>
+                </configuration>
+            </plugin>
+            -->
+        </plugins>
+        <!-- @formatter:on -->
+    </build>
+
+    <!-- @formatter:off -->
+    <dependencies>
+        <dependency><groupId>cn.home1</groupId><artifactId>logback-logstash-config</artifactId></dependency>
+
+        <dependency><groupId>com.hazelcast</groupId><artifactId>hazelcast</artifactId></dependency>
+        <dependency><groupId>com.h2database</groupId><artifactId>h2</artifactId><scope>runtime</scope></dependency>
+
+        <!--<dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-starter-client</artifactId></dependency>-->
+        <dependency><groupId>org.activiti</groupId><artifactId>activiti-spring-boot-starter-actuator</artifactId></dependency>
+        <dependency><groupId>org.activiti</groupId><artifactId>activiti-spring-boot-starter-basic</artifactId></dependency>
+        <dependency><groupId>org.activiti</groupId><artifactId>activiti-spring-boot-starter-jpa</artifactId></dependency>
+        <dependency><groupId>org.activiti</groupId><artifactId>activiti-spring-boot-starter-rest-api</artifactId></dependency>
+
+        <!--<dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId></dependency>-->
+        <dependency><groupId>org.jolokia</groupId><artifactId>jolokia-core</artifactId></dependency>
+        <!--<dependency><groupId>org.liquibase</groupId><artifactId>liquibase-core</artifactId></dependency>-->
+
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-actuator</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-aop</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-data-jpa</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-jdbc</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-mail</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-security</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-undertow</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency>
+
+        <dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-eureka</artifactId></dependency>
+        <!--<dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-netflix-eureka</artifactId></dependency>-->
+
+        <dependency><groupId>org.springframework.security</groupId><artifactId>spring-security-test</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-test</artifactId><scope>test</scope></dependency>
+        <dependency>
+			<groupId>org.subethamail</groupId>
+			<artifactId>subethasmtp-wiser</artifactId>
+			<version>1.2</version>
+			<scope>test</scope>
+			<exclusions>
+			  	<exclusion>
+			  		<groupId>javax.servlet</groupId>
+			  		<artifactId>servlet-api</artifactId>
+			 	</exclusion>
+			</exclusions>
+		</dependency>
+    </dependencies>
+    <!-- @formatter:on -->
+
+    <dependencyManagement>
+        <!-- @formatter:off -->
+        <dependencies>
+            <dependency><groupId>org.activiti</groupId><artifactId>activiti-spring-boot-starter-actuator</artifactId><version>${activiti.version}</version></dependency>
+            <dependency><groupId>org.activiti</groupId><artifactId>activiti-spring-boot-starter-basic</artifactId><version>${activiti.version}</version></dependency>
+            <dependency><groupId>org.activiti</groupId><artifactId>activiti-spring-boot-starter-jpa</artifactId><version>${activiti.version}</version></dependency>
+            <dependency><groupId>org.activiti</groupId><artifactId>activiti-spring-boot-starter-rest-api</artifactId><version>${activiti.version}</version></dependency>
+        </dependencies>
+        <!-- @formatter:on -->
+    </dependencyManagement>
+</project>

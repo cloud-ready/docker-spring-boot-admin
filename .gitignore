@@ -19,11 +19,14 @@ buildNumber.properties
 *.asc
 git.properties
 
-/logs
+*.log
+**/logs
 
 **/src/site/markdown/README.md
 **/src/site/markdown/src/readme
 **/src/site/resources
 
-/Dockerfile
-/src/main/docker/deploy.zip
+**/src/main/docker/deploy.zip
+
+docker-spring-boot-admin-server/Dockerfile
+sample-client/Dockerfile

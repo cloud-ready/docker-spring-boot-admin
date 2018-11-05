@@ -1,0 +1,107 @@
+eureka:
+  client:
+    enabled: ${EUREKA_CLIENT_ENABLED:true}
+    #registryFetchIntervalSeconds: 5
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://user:user_pass@standalone.eureka:8761/eureka/}
+    register-with-eureka: ${EUREKA_CLIENT_REGISTERWITHEUREKA:true}
+  instance:
+    # eureka.instance.hostname affect Status->instances's url href (not text) value on dashboard
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress}}}}}
+    lease-renewal-interval-in-seconds: 10
+    metadataMap:
+      user.name: ${security.user.name:${spring.security.user.name}}
+      user.password: ${security.user.password:${spring.security.user.password}}
+      management.port: ${server.port}
+      management.context-path: ${spring.boot.admin.discovery.converter.management-context-path:}
+      health.path: ${spring.boot.admin.discovery.converter.health-endpoint-path:health}
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFERIPADDRESS:false}
+
+logging:
+  file: ${LOGGING_FILE:logs/spring.log}
+  level:
+    root: ${LOGGING_LEVEL_ROOT:INFO}
+
+endpoints:
+  health.sensitive: true
+  info.sensitive: true
+  refresh:
+    enabled: true
+  restart:
+    enabled: true
+  shutdown:
+    enabled: true
+
+management:
+  # spring-boot 1.x management properties
+  context-path: ${MANAGEMENT_CONTEXTPATH:/actuator}
+  security:
+    enabled: true
+    roles: ACTUATOR # no ROLE_ prefix here
+
+  # spring-boot 2.x management properties
+  endpoint:
+    shutdown.enabled: ${MANAGEMENT_ENDPOINT_SHUTDOWN_ENABLED:true}
+    health:
+      show-details: ${MANAGEMENT_ENDPOINT_HEALTH_SHOWDETAILS:WHEN_AUTHORIZED}
+      roles: ${MANAGEMENT_ENDPOINT_HEALTH_ROLES:ACTUATOR}
+  endpoints:
+    web:
+      base-path: ${MANAGEMENT_ENDPOINTS_WEB_BASEPATH:/actuator}
+      exposure:
+        include: "${MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE:*}"
+        exclude: "${MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_EXCLUDE:}"
+
+security: # spring-boot 1.x security properties
+  basic.enabled: ${SPRING_SECURITY_ENABLED:true}
+  user:
+    name: ${SPRING_SECURITY_USER_NAME:user}
+    password: ${SPRING_SECURITY_USER_PASSWORD:user_pass}
+    role: ${SPRING_SECURITY_USER_ROLES:ACTUATOR, ADMIN, SUPERUSER, USER}
+
+server.port: ${SERVER_PORT:8080}
+
+spring:
+  aop.auto: true
+  application.name: ${SPRING_APPLICATION_NAME:sample-activity-application}
+  boot.admin:
+    client:
+      enabled: true
+      #health-url:
+      #management-url:
+      metadata:
+        user:
+          name: ${security.user.name:${spring.security.user.name}}
+          password: ${security.user.password:${spring.security.user.password}}
+      name: ${spring.application.name}
+      prefer-ip: false
+      #service-base-url:
+      #service-url:
+  cloud:
+    config:
+      enabled: false
+  datasource:
+    driver-class-name: "org.h2.Driver"
+    password:
+    username: sa
+    url: "jdbc:h2:file:/tmp/h2db/sample-activity-application/h2_database"
+  jackson.serialization.indent_output: true
+  h2.console.enabled: true
+  security: # spring-boot 2.x security properties
+    enabled: ${SPRING_SECURITY_ENABLED:true} # see: https://github.com/spring-projects/spring-boot/issues/12323
+    user:
+      name: ${SPRING_SECURITY_USER_NAME:user}
+      password: ${SPRING_SECURITY_USER_PASSWORD:user_pass}
+      roles: ${SPRING_SECURITY_USER_ROLES:ACTUATOR, ADMIN, SUPERUSER, USER}
+
+---
+spring.profiles: test
+
+available:
+  application.yml#test: true
+
+location: sample-activity-application/application.yml#test
+
+spring:
+  datasource:
+    url: "jdbc:h2:file:/tmp/h2db/sample-activity-application/h2_database;DB_CLOSE_ON_EXIT=FALSE"
