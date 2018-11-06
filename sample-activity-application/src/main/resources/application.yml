@@ -104,4 +104,5 @@ location: sample-activity-application/application.yml#test
 
 spring:
   datasource:
-    url: "jdbc:h2:file:/tmp/h2db/sample-activity-application/h2_database;DB_CLOSE_ON_EXIT=FALSE"
+    #url: "jdbc:h2:file:/tmp/h2db/sample-activity-application/h2_database;DB_CLOSE_ON_EXIT=FALSE"
+    url: "jdbc:h2:mem:test;DB_CLOSE_ON_EXIT=FALSE"
