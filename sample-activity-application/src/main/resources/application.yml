@@ -7,7 +7,7 @@ eureka:
     register-with-eureka: ${EUREKA_CLIENT_REGISTERWITHEUREKA:true}
   instance:
     # eureka.instance.hostname affect Status->instances's url href (not text) value on dashboard
-    hostname: ${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress}}}}}
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress:}}}}}
     lease-renewal-interval-in-seconds: 10
     metadataMap:
       user.name: ${security.user.name:${spring.security.user.name}}
@@ -16,6 +16,9 @@ eureka:
       management.context-path: ${spring.boot.admin.discovery.converter.management-context-path:}
       health.path: ${spring.boot.admin.discovery.converter.health-endpoint-path:health}
     prefer-ip-address: ${EUREKA_INSTANCE_PREFERIPADDRESS:false}
+
+feign:
+  hystrix.enabled: true
 
 logging:
   file: ${LOGGING_FILE:logs/spring.log}
@@ -54,6 +57,7 @@ management:
 
 security: # spring-boot 1.x security properties
   basic.enabled: ${SPRING_SECURITY_ENABLED:true}
+  ignored: '**/hystrix.stream'
   user:
     name: ${SPRING_SECURITY_USER_NAME:user}
     password: ${SPRING_SECURITY_USER_PASSWORD:user_pass}
@@ -89,6 +93,7 @@ spring:
   h2.console.enabled: true
   security: # spring-boot 2.x security properties
     enabled: ${SPRING_SECURITY_ENABLED:true} # see: https://github.com/spring-projects/spring-boot/issues/12323
+    ignored: '**/hystrix.stream'
     user:
       name: ${SPRING_SECURITY_USER_NAME:user}
       password: ${SPRING_SECURITY_USER_PASSWORD:user_pass}

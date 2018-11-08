@@ -48,12 +48,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .authorizeRequests()
             .antMatchers("/h2-console/**").hasRole("ADMIN") // allow h2 console access to admins only
-            .antMatchers("/login.html", "/**/*.css", "/img/**", "/third-party/**")
-            .permitAll();
+            .antMatchers("/login.html", "/**/*.css", "/img/**", "/third-party/**").permitAll()
+            .antMatchers("/**/hystrix.stream").permitAll()
+        ;
         http
             .authorizeRequests()
             .antMatchers("/**")
-            .authenticated();
+            .authenticated()
+        ;
         http.httpBasic();
     }
 

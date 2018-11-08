@@ -1,22 +1,7 @@
-# see: https://github.com/codecentric/spring-boot-admin/tree/1.5.x/spring-boot-admin-samples/spring-boot-admin-sample-eureka
 eureka:
   client:
-    enabled: ${EUREKA_CLIENT_ENABLED:true}
-    #registryFetchIntervalSeconds: 5
-    service-url:
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://user:user_pass@standalone.eureka:8761/eureka/}
-    register-with-eureka: ${EUREKA_CLIENT_REGISTERWITHEUREKA:true}
-  instance:
-    # eureka.instance.hostname affect Status->instances's url href (not text) value on dashboard
-    hostname: ${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress}}}}}
-    lease-renewal-interval-in-seconds: 10
-    metadataMap:
-      user.name: ${security.user.name:${spring.security.user.name}}
-      user.password: ${security.user.password:${spring.security.user.password}}
-      management.port: ${server.port}
-      management.context-path: ${spring.boot.admin.discovery.converter.management-context-path:}
-      health.path: ${spring.boot.admin.discovery.converter.health-endpoint-path:health}
-    prefer-ip-address: ${EUREKA_INSTANCE_PREFERIPADDRESS:false}
+    enabled: ${EUREKA_CLIENT_ENABLED:false}
+    register-with-eureka: ${EUREKA_CLIENT_REGISTERWITHEUREKA:false}
 
 flyway:
   locations: classpath:/db
@@ -43,6 +28,8 @@ endpoints:
 management:
   # spring-boot 1.x management properties
   context-path: ${MANAGEMENT_CONTEXTPATH:/actuator}
+  health:
+    mail.enabled: false
   security:
     enabled: true
     roles: ACTUATOR # no ROLE_ prefix here
@@ -77,24 +64,9 @@ spring:
     auto-deregistration: false
     auto-registration: true
     client:
-      enabled: true
-      #health-url:
-      #management-url:
-      metadata:
-        user:
-          name: ${security.user.name:${spring.security.user.name:${SPRING_SECURITY_USER_NAME:admin}}}
-          password: ${security.user.password:${spring.security.user.password:${SPRING_SECURITY_USER_PASSWORD:admin_pass}}}
-      name: ${spring.application.name}
-      prefer-ip: false
-      #service-base-url:
-      #service-url:
+      enabled: false
     discovery:
-      converter:
-        management-context-path: ${management.endpoints.web.base-path:${management.context-path:/actuator}}
-        health-endpoint-path: "health"
-      enabled: true
-      ignored-services:
-      services: "*"
+      enabled: false
     hazelcast:
       application-store: "spring-boot-admin-application-store"
       enabled: true
@@ -115,9 +87,7 @@ spring:
     register-once: true
     routes.endpoints: activiti,env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream,turbine.stream
     turbine:
-      clusters: default
-      enabled: true
-      location: ${SPRING_BOOT_ADMIN_TURBINE_LOCATION:${spring.application.name}}
+      enabled: false
     ui:
       title: ${SPRING_BOOT_ADMIN_TITLE:Spring Boot Admin}
     url: http://localhost:${server.port:${SERVER_PORT:1111}} # comma split if there are multiple servers
@@ -126,13 +96,30 @@ spring:
   cloud:
     config:
       enabled: false
+    inetutils:
+      preferred-networks: ${SPRING_CLOUD_INETUTILS_PREFERREDNETWORKS:^192\.168\..+, ^172\.30\..+, ^10\..+}
+      ignored-interfaces: ${SPRING_CLOUD_INETUTILS_IGNOREDINTERFACES:^[a-z]?tun[0-9]*, ^awdl[0-9]*, ^lo[0-9]*}
+    service-registry:
+      # see: org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationAutoConfiguration
+      auto-registration:
+        enabled: ${SPRING_CLOUD_SERVICEREGISTRY_AUTOREGISTRATION_ENABLED:true}
+        fail-fast: ${SPRING_CLOUD_SERVICEREGISTRY_AUTOREGISTRATION_FAILFAST:true}
+      # custom property
+      auto-multi-registration.enabled: ${SPRING_CLOUD_SERVICEREGISTRY_AUTOREGISTRATION_ENABLED:${spring.cloud.service-registry.auto-registration.enabled:true}}
   datasource:
     driver-class-name: "org.h2.Driver"
     password:
     username: sa
     url: "jdbc:h2:file:/tmp/h2db/spring-boot-admin-server/h2_database"
-  jackson.serialization.indent_output: true
   h2.console.enabled: true
+  jackson.serialization.indent_output: true
+  mail:
+    test-connection: false
+#  rabbitmq:
+#    host: ${SPRING_RABBITMQ_HOST:cloudbus}
+#    port: ${SPRING_RABBITMQ_PORT:5672}
+#    username: ${SPRING_RABBITMQ_USERNAME:user}
+#    password: ${SPRING_RABBITMQ_PASSWORD:user_pass}
   security: # spring-boot 2.x security properties
     enabled: ${SPRING_SECURITY_ENABLED:true} # see: https://github.com/spring-projects/spring-boot/issues/12323
     user:
@@ -140,11 +127,135 @@ spring:
       password: ${SPRING_SECURITY_USER_PASSWORD:admin_pass}
       roles: ${SPRING_SECURITY_USER_ROLES:ACTUATOR, ADMIN, SUPERUSER, USER}
 
+---
+spring:
+  profiles: client
+
+spring.boot:
+  admin:
+    client:
+      enabled: true
+      #health-url:
+      #management-url:
+      metadata:
+        user:
+          name: ${security.user.name:${spring.security.user.name:${SPRING_SECURITY_USER_NAME:admin}}}
+          password: ${security.user.password:${spring.security.user.password:${SPRING_SECURITY_USER_PASSWORD:admin_pass}}}
+      name: ${spring.application.name}
+      prefer-ip: false
+      #service-base-url:
+      #service-url:
+    turbine:
+      clusters: default
+      enabled: true
+      location: ${SPRING_BOOT_ADMIN_TURBINE_LOCATION:${spring.application.name}}
+
+---
+spring:
+  profiles: discovery
+
+# see: https://github.com/codecentric/spring-boot-admin/tree/1.5.x/spring-boot-admin-samples/spring-boot-admin-sample-eureka
+eureka:
+  client:
+    enabled: ${EUREKA_CLIENT_ENABLED:true}
+    #registryFetchIntervalSeconds: 5
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://user:user_pass@standalone.eureka:8761/eureka/}
+    register-with-eureka: ${EUREKA_CLIENT_REGISTERWITHEUREKA:true}
+  instance:
+    health-check-url-path: ${endpoints.health.path:/health}
+    # eureka.instance.hostname affect Status->instances's url href (not text) value on dashboard
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress}}}}}
+    lease-renewal-interval-in-seconds: 10
+    metadataMap:
+
+      applicationId: ${spring.application.name}
+      management.context-path: ${server.context-path:}${management.endpoints.web.base-path:${management.context-path:}}
+      management.port: ${server.port}
+      user.name: ${security.user.name:${spring.security.user.name}}
+      user.password: ${security.user.password:${spring.security.user.password}}
+      health.path: ${spring.boot.admin.discovery.converter.health-endpoint-path:health}
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFERIPADDRESS:false}
+    status-page-url-path: ${endpoints.info.path:/info}
+    # Registering a Secure Application
+    #health-check-url: https://${eureka.instance.hostname}/
+    #status-page-url: https://${eureka.instance.hostname}/
+
+feign:
+  hystrix.enabled: true
+
+spring.boot:
+  admin:
+    discovery:
+      converter:
+        management-context-path: ${management.endpoints.web.base-path:${management.context-path:}}
+        health-endpoint-path: "health"
+      enabled: true
+      ignored-services:
+      services: "*"
+
 turbine:
   appConfig: ${TURBINE_APPCONFIG:${spring.application.name}}
   clusterNameExpression: ${TURBINE_CLUSTERNAMEEXPRESSION:new String("default")}
   combineHostPort: ${TURBINE_COMBINEHOSTPORT:true}
+  # make turbine correctly aggregate streams from applications that have custom context-path
+  # see: http://blog.didispace.com/spring-cloud-tips-4/
+  # see: https://stackoverflow.com/questions/39511244/turbine-instanceurlsuffix-not-working
+  #instanceInsertPort: false
+  instanceUrlSuffix: ${server.context-path:}${management.endpoints.web.base-path:${management.context-path:}}/hystrix.stream
 
+---
+spring:
+  profiles: port_nonsecure
+
+eureka.instance:
+  # eureka.instance.instance-id affect Status->instances's url text (not href) value on dashboard
+  instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress:}}}}}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:${server.port}}}
+  non-secure-port: ${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:${server.port}}}
+  non-secure-port-enabled: true
+  secure-port-enabled: false
+
+#logging:
+#  file: ${LOGGING_FILE:${LOG_FILE:${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress}}}}}-${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:${server.port}}}}.log}
+
+spring.cloud.consul:
+  discovery:
+    health-check-url: http://${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress:}}}}}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:${server.port:80}}}${SERVER_CONTEXTPATH:${server.context-path:}}${MANAGEMENT_CONTEXTPATH:${management.context-path:}}/health
+    # consul's instance-id must start with letters, hostname could be an ip address, so place spring.application.name at first position.
+    instance-id: ${spring.application.name}:${SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME:${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress:}}}}}}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:${server.port}}}
+
+---
+spring:
+  profiles: port_secure
+
+eureka.instance:
+  # eureka.instance.instance-id affect Status->instances's url text (not href) value on dashboard
+  instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress:}}}}}:${EUREKA_INSTANCE_SECUREPORT:${SERVER_PORT:${server.port}}}
+  non-secure-port-enabled: false
+  secure-port: ${EUREKA_INSTANCE_SECUREPORT:${SERVER_PORT:${server.port}}}
+  secure-port-enabled: true
+
+#logging:
+#  file: ${LOGGING_FILE:${LOG_FILE:${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress}}}}}-${EUREKA_INSTANCE_SECUREPORT:${SERVER_PORT:${server.port}}}}.log}
+
+spring.cloud.consul:
+  discovery:
+    health-check-url: https://${SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME:${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress:}}}}}}:${EUREKA_INSTANCE_SECUREPORT:${SERVER_PORT:${server.port}}}${SERVER_CONTEXTPATH:${server.context-path:}}${MANAGEMENT_CONTEXTPATH:${management.context-path:}}/health
+    # consul's instance-id must start with letters, hostname could be an ip address, so place spring.application.name at first position.
+    instance-id: ${spring.application.name}:${SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME:${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress:}}}}}}:${EUREKA_INSTANCE_SECUREPORT:${SERVER_PORT:${server.port}}}
+
+---
+spring:
+  profiles: manual_ip_hostname
+
+eureka.instance:
+  hostname: ${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress:}}}}}
+  ip-address: ${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress:}}}
+
+spring.cloud:
+  client:
+    hostname: ${SPRING_CLOUD_CLIENT_HOSTNAME:}
+    ipAddress: ${SPRING_CLOUD_CLIENT_IPADDRESS:}
 
 ---
 spring.profiles: mail
@@ -154,11 +265,19 @@ available:
 
 location: spring-boot-admin-server/application.yml#mail
 
+management:
+  # spring-boot 1.x management properties
+  health:
+    mail.enabled: true
+
 spring:
   boot.admin:
     notify:
       mail.enabled: true
   mail:
     host: ${SPRING_MAIL_HOST:smtp.example.com}
+    test-connection: true
     password: ${SPRING_MAIL_PASSWORD:smtp_user_pass}
+    properties:
+      mail.mime.address.strict: false
     username: ${SPRING_MAIL_USERNAME:smtp_user}
