@@ -30,4 +30,5 @@ git.properties
 
 docker-spring-boot-admin-server/docker-compose-base.yml
 docker-spring-boot-admin-server/Dockerfile
+docker-spring-boot-admin-server/src/main/docker/deploy.zip
 sample-client/Dockerfile

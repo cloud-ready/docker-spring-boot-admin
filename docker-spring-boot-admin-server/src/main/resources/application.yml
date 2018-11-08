@@ -1,7 +1,20 @@
 eureka:
   client:
-    enabled: ${EUREKA_CLIENT_ENABLED:false}
+    enabled: ${EUREKA_CLIENT_ENABLED:true}
     register-with-eureka: ${EUREKA_CLIENT_REGISTERWITHEUREKA:false}
+    #registryFetchIntervalSeconds: 5
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://user:user_pass@standalone.eureka:8761/eureka/}
+  instance:
+    health-check-url-path: ${endpoints.health.path:/health}
+    # eureka.instance.hostname affect Status->instances's url href (not text) value on dashboard
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress}}}}}
+    lease-renewal-interval-in-seconds: 10
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFERIPADDRESS:false}
+    status-page-url-path: ${endpoints.info.path:/info}
+    # Registering a Secure Application
+    #health-check-url: https://${eureka.instance.hostname}/
+    #status-page-url: https://${eureka.instance.hostname}/
 
 flyway:
   locations: classpath:/db
@@ -157,32 +170,25 @@ spring:
 # see: https://github.com/codecentric/spring-boot-admin/tree/1.5.x/spring-boot-admin-samples/spring-boot-admin-sample-eureka
 eureka:
   client:
-    enabled: ${EUREKA_CLIENT_ENABLED:true}
-    #registryFetchIntervalSeconds: 5
-    service-url:
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://user:user_pass@standalone.eureka:8761/eureka/}
     register-with-eureka: ${EUREKA_CLIENT_REGISTERWITHEUREKA:true}
   instance:
-    health-check-url-path: ${endpoints.health.path:/health}
-    # eureka.instance.hostname affect Status->instances's url href (not text) value on dashboard
-    hostname: ${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress}}}}}
-    lease-renewal-interval-in-seconds: 10
     metadataMap:
-
       applicationId: ${spring.application.name}
       management.context-path: ${server.context-path:}${management.endpoints.web.base-path:${management.context-path:}}
       management.port: ${server.port}
       user.name: ${security.user.name:${spring.security.user.name}}
       user.password: ${security.user.password:${spring.security.user.password}}
       health.path: ${spring.boot.admin.discovery.converter.health-endpoint-path:health}
-    prefer-ip-address: ${EUREKA_INSTANCE_PREFERIPADDRESS:false}
-    status-page-url-path: ${endpoints.info.path:/info}
-    # Registering a Secure Application
-    #health-check-url: https://${eureka.instance.hostname}/
-    #status-page-url: https://${eureka.instance.hostname}/
 
 feign:
   hystrix.enabled: true
+
+hystrix:
+  stream:
+    maxConcurrentConnections: 10
+  config:
+    stream:
+      maxConcurrentConnections: 10
 
 spring.boot:
   admin:
