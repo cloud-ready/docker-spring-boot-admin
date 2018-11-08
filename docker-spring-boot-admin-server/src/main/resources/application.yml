@@ -125,7 +125,10 @@ spring:
     username: sa
     url: "jdbc:h2:file:/tmp/h2db/spring-boot-admin-server/h2_database"
   h2.console.enabled: true
-  jackson.serialization.indent_output: true
+  jackson:
+    serialization:
+      indent_output: ${SPRINT_JACKSON_SERIALIZATION_INDENTOUTPUT:true}
+      write-dates-as-timestamps: ${SPRINT_JACKSON_SERIALIZATION_WRITEDATESASTIMESTAMPS:false}
   mail:
     test-connection: false
 #  rabbitmq:
