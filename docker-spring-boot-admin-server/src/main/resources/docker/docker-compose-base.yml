@@ -27,6 +27,8 @@ services:
 
     - SPRING_APPLICATION_NAME=${SPRING_APPLICATION_NAME:-spring-boot-admin}
 
+    - SPRING_BOOT_ADMIN_ROUTES_ENDPOINTS=${SPRING_BOOT_ADMIN_ROUTES_ENDPOINTS:-activiti,auditevents,dump,configprops,env,flyway,heapdump,hystrix.stream,info,jolokia,liquibase,logfile,loggers,refresh,metrics,trace,turbine.stream}
+
     - SPRING_CLOUD_CLIENT_HOSTNAME=${EUREKA_INSTANCE_HOSTNAME:-spring-boot-admin}
     - SPRING_CLOUD_CLIENT_IPADDRESS=${SPRING_CLOUD_CLIENT_IPADDRESS}
 

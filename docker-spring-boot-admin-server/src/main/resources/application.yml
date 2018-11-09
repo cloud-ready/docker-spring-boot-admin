@@ -2,14 +2,14 @@ eureka:
   client:
     enabled: ${EUREKA_CLIENT_ENABLED:true}
     register-with-eureka: ${EUREKA_CLIENT_REGISTERWITHEUREKA:false}
-    #registryFetchIntervalSeconds: 5
+    #registryFetchIntervalSeconds: ${EUREKA_CLIENT_REGISTRYFETCHINTERVALSECONDS:5}
     service-url:
       defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://user:user_pass@standalone.eureka:8761/eureka/}
   instance:
     health-check-url-path: ${endpoints.health.path:/health}
     # eureka.instance.hostname affect Status->instances's url href (not text) value on dashboard
     hostname: ${EUREKA_INSTANCE_HOSTNAME:${SPRING_CLOUD_CLIENT_HOSTNAME:${EUREKA_INSTANCE_IPADDRESS:${HOST_IPADDRESS:${spring.cloud.client.ipAddress}}}}}
-    lease-renewal-interval-in-seconds: 10
+    lease-renewal-interval-in-seconds: ${EUREKA_INSTANCE_LEASERENEWALINTERVALINSECONDS:10}
     prefer-ip-address: ${EUREKA_INSTANCE_PREFERIPADDRESS:false}
     status-page-url-path: ${endpoints.info.path:/info}
     # Registering a Secure Application
@@ -17,11 +17,11 @@ eureka:
     #status-page-url: https://${eureka.instance.hostname}/
 
 flyway:
-  locations: classpath:/db
+  locations: ${FLYWAY_LOCATIONS:classpath:/db}
 
 liquibase:
-  enabled: true
-  change-log: classpath:/db/changelog/db.changelog-master.xml
+  enabled: ${LIQUIBASE_ENABLED:true}
+  change-log: ${LIQUIBASE_CHANGELOG:classpath:/db/changelog/db.changelog-master.xml}
 
 logging:
   file: ${LOGGING_FILE:logs/spring.log}
@@ -29,23 +29,23 @@ logging:
     root: ${LOGGING_LEVEL_ROOT:INFO}
 
 endpoints:
-  health.sensitive: true
-  info.sensitive: true
+  health.sensitive: ${ENDPOINTS_HEALTH_SENSITIVE:true}
+  info.sensitive: ${ENDPOINTS_INFO_SENSITIVE:true}
   refresh:
-    enabled: true
+    enabled: ${ENDPOINTS_REFRESH_ENABLED:true}
   restart:
-    enabled: true
+    enabled: ${ENDPOINTS_RESTART_ENABLED:true}
   shutdown:
-    enabled: true
+    enabled: ${ENDPOINTS_SHUTDOWN_ENABLED:true}
 
 management:
   # spring-boot 1.x management properties
   context-path: ${MANAGEMENT_CONTEXTPATH:/actuator}
   health:
-    mail.enabled: false
+    mail.enabled: ${MANAGEMENT_HEALTH_MAIL_ENABLED:false}
   security:
-    enabled: true
-    roles: ACTUATOR # no ROLE_ prefix here
+    enabled: ${MANAGEMENT_SECURITY_ENABLED:true}
+    roles: ${MANAGEMENT_SECURITY_ROLES:ACTUATOR} # no ROLE_ prefix here
 
   # spring-boot 2.x management properties
   endpoint:
@@ -73,39 +73,39 @@ spring:
   aop.auto: true
   application.name: ${SPRING_APPLICATION_NAME:spring-boot-admin-server}
   boot.admin:
-    api-path: "api/applications"
-    auto-deregistration: false
-    auto-registration: true
+    api-path: ${SPRING_BOOT_ADMIN_APIPATH:api/applications}
+    auto-deregistration: ${SPRING_BOOT_ADMIN_AUTODEREGISTRATION:false}
+    auto-registration: ${SPRING_BOOT_ADMIN_AUTOREGISTRATION:true}
     client:
-      enabled: false
+      enabled: ${SPRING_BOOT_ADMIN_CLIENT_ENABLED:false}
     discovery:
-      enabled: false
+      enabled: ${SPRING_BOOT_ADMIN_DISCOVERY_ENABLED:false}
     hazelcast:
-      application-store: "spring-boot-admin-application-store"
-      enabled: true
-      event-store: "spring-boot-admin-event-store"
+      application-store: ${SPRING_BOOT_ADMIN_HAZELCAST_APPLICATIONSTORE:spring-boot-admin-application-store}
+      enabled: ${SPRING_BOOT_ADMIN_HAZELCAST_ENABLED:true}
+      event-store: ${SPRING_BOOT_ADMIN_HAZELCAST_EVENTSTORE:spring-boot-admin-event-store}
     monitor:
-      period: 10000
-      status-lifetime: 10000
+      period: ${SPRING_BOOT_ADMIN_MONITOR_PERIOD:10000}
+      status-lifetime: ${SPRING_BOOT_ADMIN_MONITOR_STATUSLIFETIME:10000}
     notify:
       mail:
-        #cc:
-        enabled: false
-        #from:
-        ignore-changes: "UNKNOWN:UP"
-        subject: "#{application.name} (#{application.id}) is #{to.status}"
-        text: "#{application.name} (#{application.id})\nstatus changed from #{from.status} to #{to.status}\n\n#{application.healthUrl}"
-        to: "root@localhost"
-    period: 100000
-    register-once: true
-    routes.endpoints: activiti,env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream,turbine.stream
+        #cc: ${SPRING_BOOT_ADMIN_NOTIFY_MAIL_CC:}
+        enabled: ${SPRING_BOOT_ADMIN_NOTIFY_MAIL_ENABLED:false}
+        #from: ${SPRING_BOOT_ADMIN_NOTIFY_MAIL_FROM:}
+        ignore-changes: ${SPRING_BOOT_ADMIN_NOTIFY_MAIL_IGNORECHANGES:UNKNOWN:UP}
+        subject: "${SPRING_BOOT_ADMIN_NOTIFY_MAIL_SUBJECT:#{application.name} (#{application.id}) is #{to.status}}"
+        text: "${SPRING_BOOT_ADMIN_NOTIFY_MAIL_TEXT:#{application.name} (#{application.id})\nstatus changed from #{from.status} to #{to.status}\n\n#{application.healthUrl}}"
+        to: ${SPRING_BOOT_ADMIN_NOTIFY_MAIL_TO:root@localhost}
+    period: ${SPRING_BOOT_ADMIN_PERIOD:100000}
+    register-once: ${SPRING_BOOT_ADMIN_REGISTERONCE:true}
+    routes.endpoints: ${SPRING_BOOT_ADMIN_ROUTES_ENDPOINTS:activiti,auditevents,dump,configprops,env,flyway,heapdump,hystrix.stream,info,jolokia,liquibase,logfile,loggers,refresh,metrics,trace,turbine.stream}
     turbine:
-      enabled: false
+      enabled: ${SPRING_BOOT_ADMIN_TURBINE_ENABLED:false}
     ui:
-      title: ${SPRING_BOOT_ADMIN_TITLE:Spring Boot Admin}
-    url: http://localhost:${server.port:${SERVER_PORT:1111}} # comma split if there are multiple servers
-    username: admin
-    password: admin_pass
+      title: ${SPRING_BOOT_ADMIN_UI_TITLE:Spring Boot Admin}
+    url: ${SPRING_BOOT_ADMIN_URL:http://localhost:${server.port:${SERVER_PORT:1111}}} # comma split if there are multiple servers
+    username: ${SPRING_SECURITY_USER_NAME:admin}
+    password: ${SPRING_SECURITY_USER_PASSWORD:admin_pass}
   cloud:
     config:
       enabled: false
@@ -120,17 +120,17 @@ spring:
       # custom property
       auto-multi-registration.enabled: ${SPRING_CLOUD_SERVICEREGISTRY_AUTOREGISTRATION_ENABLED:${spring.cloud.service-registry.auto-registration.enabled:true}}
   datasource:
-    driver-class-name: "org.h2.Driver"
-    password:
-    username: sa
-    url: "jdbc:h2:file:/tmp/h2db/spring-boot-admin-server/h2_database"
-  h2.console.enabled: true
+    driver-class-name: ${SPRING_DATASOURCE_DRIVERCLASSNAME:org.h2.Driver}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+    username: ${SPRING_DATASOURCE_USERNAME:sa}
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:file:/tmp/h2db/spring-boot-admin-server/h2_database}
+  h2.console.enabled: ${SPRING_H2_CONSOLE_ENABLED:true}
   jackson:
     serialization:
       indent_output: ${SPRINT_JACKSON_SERIALIZATION_INDENTOUTPUT:true}
       write-dates-as-timestamps: ${SPRINT_JACKSON_SERIALIZATION_WRITEDATESASTIMESTAMPS:false}
   mail:
-    test-connection: false
+    test-connection: ${SPRING_MAIL_TESTCONNECTION:false}
 #  rabbitmq:
 #    host: ${SPRING_RABBITMQ_HOST:cloudbus}
 #    port: ${SPRING_RABBITMQ_PORT:5672}
@@ -150,20 +150,20 @@ spring:
 spring.boot:
   admin:
     client:
-      enabled: true
-      #health-url:
-      #management-url:
+      enabled: ${SPRING_BOOT_ADMIN_CLIENT_ENABLED:true}
+      #health-url: ${SPRING_BOOT_ADMIN_CLIENT_HEALTHURL:}
+      #management-url: ${SPRING_BOOT_ADMIN_CLIENT_MANAGEMENTURL:}
       metadata:
         user:
           name: ${security.user.name:${spring.security.user.name:${SPRING_SECURITY_USER_NAME:admin}}}
           password: ${security.user.password:${spring.security.user.password:${SPRING_SECURITY_USER_PASSWORD:admin_pass}}}
-      name: ${spring.application.name}
-      prefer-ip: false
-      #service-base-url:
-      #service-url:
+      name: ${SPRING_BOOT_ADMIN_CLIENT_NAME:${spring.application.name}}
+      prefer-ip: ${SPRING_BOOT_ADMIN_CLIENT_PREFERIP:false}
+      #service-base-url: ${SPRING_BOOT_ADMIN_CLIENT_SERVICEBASEURL:}
+      #service-url: ${SPRING_BOOT_ADMIN_CLIENT_SERVICEURL:}
     turbine:
-      clusters: default
-      enabled: true
+      clusters: ${SPRING_BOOT_ADMIN_TURBINE_CLUSTERS:default}
+      enabled: ${SPRING_BOOT_ADMIN_TURBINE_ENABLED:true}
       location: ${SPRING_BOOT_ADMIN_TURBINE_LOCATION:${spring.application.name}}
 
 ---
@@ -184,24 +184,24 @@ eureka:
       health.path: ${spring.boot.admin.discovery.converter.health-endpoint-path:health}
 
 feign:
-  hystrix.enabled: true
+  hystrix.enabled: ${FEIGN_HYSTRIX_ENABLED:true}
 
 hystrix:
   stream:
-    maxConcurrentConnections: 10
+    maxConcurrentConnections: ${HYSTRIX_STREAM_MAXCONCURRENTCONNECTIONS:10}
   config:
     stream:
-      maxConcurrentConnections: 10
+      maxConcurrentConnections: ${HYSTRIX_CONFIG_STREAM_MAXCONCURRENTCONNECTIONS:10}
 
 spring.boot:
   admin:
     discovery:
       converter:
-        management-context-path: ${management.endpoints.web.base-path:${management.context-path:}}
-        health-endpoint-path: "health"
-      enabled: true
-      ignored-services:
-      services: "*"
+        management-context-path: ${SPRING_BOOT_ADMIN_DISCOVERY_CONVERTER_MANAGEMENTCONTEXTPATH:${management.endpoints.web.base-path:${management.context-path:}}}
+        health-endpoint-path: ${SPRING_BOOT_ADMIN_DISCOVERY_CONVERTER_HEALTHENDPOINTPATH:health}
+      enabled: ${SPRING_BOOT_ADMIN_DISCOVERY_ENABLED:true}
+      ignored-services: "${SPRING_BOOT_ADMIN_DISCOVERY_IGNOREDSERVICES:}"
+      services: "${SPRING_BOOT_ADMIN_DISCOVERY_SERVICES:*}"
 
 turbine:
   appConfig: ${TURBINE_APPCONFIG:${spring.application.name}}
@@ -210,8 +210,8 @@ turbine:
   # make turbine correctly aggregate streams from applications that have custom context-path
   # see: http://blog.didispace.com/spring-cloud-tips-4/
   # see: https://stackoverflow.com/questions/39511244/turbine-instanceurlsuffix-not-working
-  #instanceInsertPort: false
-  instanceUrlSuffix: ${server.context-path:}${management.endpoints.web.base-path:${management.context-path:}}/hystrix.stream
+  #instanceInsertPort: ${TURBINE_INSTANCEINSERTPORT:false}
+  instanceUrlSuffix: ${TURBINE_INSTANCEURLSUFFIX:${server.context-path:}${management.endpoints.web.base-path:${management.context-path:}}/hystrix.stream}
 
 ---
 spring:
@@ -277,16 +277,16 @@ location: spring-boot-admin-server/application.yml#mail
 management:
   # spring-boot 1.x management properties
   health:
-    mail.enabled: true
+    mail.enabled: ${MANAGEMENT_HEALTH_MAIL_ENABLED:true}
 
 spring:
   boot.admin:
     notify:
-      mail.enabled: true
+      mail.enabled: ${SPRING_BOOT_ADMIN_NOTIFY_MAIL_ENABLED:true}
   mail:
     host: ${SPRING_MAIL_HOST:smtp.example.com}
-    test-connection: true
+    test-connection: ${SPRING_MAIL_TESTCONNECTION:true}
     password: ${SPRING_MAIL_PASSWORD:smtp_user_pass}
     properties:
-      mail.mime.address.strict: false
+      mail.mime.address.strict: ${SPRING_MAIL_PROPERTIES_MAIL_MIME_ADDRESS_STRICT:false}
     username: ${SPRING_MAIL_USERNAME:smtp_user}

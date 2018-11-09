@@ -9,7 +9,7 @@ see: https://yq.aliyun.com/articles/226381
 
 Configuration via environment variables
 
-- SPRING_BOOT_ADMIN_TITLE
+- SPRING_BOOT_ADMIN_UI_TITLE
 > set page-title, default: Spring Boot Admin
 
 - SPRING_SECURITY_ENABLED
