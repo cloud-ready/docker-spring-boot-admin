@@ -4,7 +4,7 @@ services:
     extends:
       file: docker-compose-base.yml
       service: base-spring-boot-admin
-    container_name: ${CONTAINER_HOST_NAME:-spring-boot-admin}
+    container_name: ${CONTAINER_HOST_NAME:-standalone.spring-boot-admin}
     environment:
     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:-http://user:user_pass@standalone.eureka:8761/eureka/}
     - LOGGING_LEVEL_ROOT=${LOGGING_LEVEL_ROOT:-DEBUG}
@@ -14,12 +14,11 @@ services:
     #- SPRING_CLOUD_CONFIG_USERNAME=${SPRING_CLOUD_CONFIG_USERNAME:-admin}
     #- SPRING_CLOUD_CONSUL_ENABLED=${SPRING_CLOUD_CONSUL_ENABLED:-false}
     - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-discovery,manual_ip_hostname,port_nonsecure}
-    hostname: ${CONTAINER_HOST_NAME:-spring-boot-admin}
-    #network_mode: bridge
+    hostname: ${CONTAINER_HOST_NAME:-standalone.spring-boot-admin}
     networks:
       local-network:
-        ipv4_address: 172.16.238.99
-        #ipv6_address: 2001:3984:3989::99
+        ipv4_address: ${IPV4_ADDRESS:-172.16.238.99}
+        #ipv6_address: ${IPV6_ADDRESS:-2001:3984:3989::99}
     ports:
     - "${EUREKA_INSTANCE_NONSECUREPORT:-1111}:${SERVER_PORT:-1111}"
     volumes:
