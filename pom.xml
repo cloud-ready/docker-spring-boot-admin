@@ -55,8 +55,8 @@
                 <type>pom</type>
             </dependency>
 
+            <dependency><groupId>cn.home1</groupId><artifactId>logback-gelf-config</artifactId><version>${log-config.version}</version></dependency>
             <dependency><groupId>cn.home1</groupId><artifactId>logback-logstash-config</artifactId><version>${log-config.version}</version></dependency>
-            <dependency><groupId>cn.home1</groupId><artifactId>logback-logstash-deps</artifactId><version>${log-config.version}</version></dependency>
             <dependency><groupId>cn.home1</groupId><artifactId>logback-test-config</artifactId><version>${log-config.version}</version><scope>test</scope></dependency>
 
             <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui</artifactId><version>${spring.boot.admin.version}</version></dependency>
@@ -82,7 +82,7 @@
         <docker.image.prefix>cloudready/</docker.image.prefix>
 
         <java.version>1.8</java.version>
-        <log-config.version>0.1.2</log-config.version>
+        <log-config.version>0.2.0</log-config.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring.boot.admin.version>1.5.7</spring.boot.admin.version>
