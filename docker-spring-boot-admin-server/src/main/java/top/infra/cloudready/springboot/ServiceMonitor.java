@@ -1,13 +1,13 @@
 package top.infra.cloudready.springboot;
 
+import io.micrometer.core.instrument.MeterRegistry;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.metrics.CounterService;
-import org.springframework.boot.actuate.metrics.GaugeService;
 import org.springframework.stereotype.Component;
 
 @Aspect
@@ -15,15 +15,12 @@ import org.springframework.stereotype.Component;
 public class ServiceMonitor {
 
     @Autowired
-    private CounterService counterService;
+    private MeterRegistry meterRegistry;
 
     @Before("execution(* top.infra.cloudready.springboot.controller.*.*(..))")
     public void countServiceInvoke(final JoinPoint joinPoint) {
-        this.counterService.increment(joinPoint.getSignature() + "_count");
+        this.meterRegistry.counter(joinPoint.getSignature() + "_count").increment();
     }
-
-    @Autowired
-    private GaugeService gaugeService;
 
     @Around("execution(* top.infra.cloudready.springboot.controller.*.*(..))")
     public void latencyService(final ProceedingJoinPoint pjp) throws Throwable {
@@ -31,6 +28,7 @@ public class ServiceMonitor {
         pjp.proceed();
         long end = System.currentTimeMillis();
 
-        this.gaugeService.submit(pjp.getSignature() + "_latency", (double) (end - start));
+        this.meterRegistry.gauge(pjp.getSignature() + "_latency", (double) (end - start));
+        //this.gaugeService.submit(pjp.getSignature() + "_latency", (double) (end - start));
     }
 }

@@ -20,3 +20,12 @@ Configuration via environment variables
 
 - SPRING_SECURITY_USER_PASSWORD
 > set password, default: admin_pass
+
+
+### Build this project
+
+```bash
+JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-11.0.2.jdk/Contents/Home" \
+    mvn -Dskip-artifacts=true -Dskip-quality=true \
+        help:active-profiles clean package spotbugs:spotbugs spotbugs:check pmd:pmd pmd:check
+```

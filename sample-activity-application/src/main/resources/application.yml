@@ -73,6 +73,8 @@ security: # spring-boot 1.x security properties
 server.port: ${SERVER_PORT:8080}
 
 spring:
+  activiti:
+    historyLevel: none
   aop.auto: true
   application.name: ${SPRING_APPLICATION_NAME:sample-activity-application}
   boot.admin:

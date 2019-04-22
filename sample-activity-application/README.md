@@ -23,3 +23,7 @@ Say hello process
 ```bash
 curl -i -u user:user_pass -H "Content-Type: application/json" http://localhost:8080/start-process
 ```
+
+see: https://github.com/Activiti/activiti-examples
+see: https://www.activiti.org/quick-start
+see: [SpringBoot2.0 & Activiti6.0](https://github.com/Shurlormes/Activiti)

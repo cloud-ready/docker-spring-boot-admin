@@ -13,7 +13,7 @@ services:
     #- SPRING_CLOUD_CONFIG_PASSWORD=${SPRING_CLOUD_CONFIG_PASSWORD:-admin_pass}
     #- SPRING_CLOUD_CONFIG_USERNAME=${SPRING_CLOUD_CONFIG_USERNAME:-admin}
     #- SPRING_CLOUD_CONSUL_ENABLED=${SPRING_CLOUD_CONSUL_ENABLED:-false}
-    - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-discovery,manual_ip_hostname,port_nonsecure}
+    - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-discovery,port_nonsecure}
     hostname: ${CONTAINER_HOST_NAME:-standalone.spring-boot-admin}
     network_mode: bridge
     ports:
