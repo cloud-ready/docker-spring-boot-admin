@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>docker-spring-boot-admin</artifactId>
-    <description>Spring Boot Admin</description>
-    <name>docker-spring-boot-admin</name>
-    <packaging>pom</packaging>
+    <artifactId>docker-spring-boot-admin-server</artifactId>
+    <description>Spring Boot Admin Server</description>
+    <name>docker-spring-boot-admin-server</name>
+    <packaging>jar</packaging>
     <parent>
         <artifactId>cloud-ready-parent</artifactId>
         <groupId>top.infra</groupId>
@@ -35,17 +35,84 @@
                     <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <classifier>exec</classifier>
+                    <layout>ZIP</layout>
+                </configuration>
+                <executions>
+                    <execution><id>build-info</id><goals><goal>build-info</goal></goals></execution>
+                    <execution><id>repackage</id><goals><goal>repackage</goal></goals><configuration><attach>false</attach></configuration></execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <configuration>
+                    <repository>${docker.image.prefix}spring-boot-admin</repository>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
     <!-- @formatter:off -->
     <dependencies>
+        <dependency>
+            <groupId>cn.home1</groupId><artifactId>logback-gelf-config</artifactId>
+            <exclusions>
+                <!--<exclusion><artifactId>logbook-spring-boot-starter</artifactId><groupId>org.zalando</groupId></exclusion>-->
+            </exclusions>
+        </dependency>
+        <dependency><groupId>cn.home1</groupId><artifactId>spring-cloud-multi-registration</artifactId><scope>runtime</scope></dependency>
+
+        <dependency><groupId>com.hazelcast</groupId><artifactId>hazelcast</artifactId></dependency>
+        <dependency><groupId>com.h2database</groupId><artifactId>h2</artifactId><scope>runtime</scope></dependency>
+
+        <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-cloud</artifactId></dependency>
+        <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui</artifactId></dependency>
+        <!--<dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui-activiti</artifactId></dependency>
+        <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui-hystrix</artifactId></dependency>
+        <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui-login</artifactId></dependency>
+        <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui-turbine</artifactId></dependency>-->
+        <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-starter-client</artifactId></dependency>
+        <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-starter-server</artifactId></dependency>
+
+        <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId></dependency>
+        <dependency><groupId>org.jolokia</groupId><artifactId>jolokia-core</artifactId></dependency>
+        <dependency><groupId>org.liquibase</groupId><artifactId>liquibase-core</artifactId></dependency>
+
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-actuator</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-aop</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-data-jpa</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-jdbc</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-mail</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-security</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-undertow</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency>
+
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-properties-migrator</artifactId><scope>runtime</scope></dependency>
+
+        <dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-consul-all</artifactId></dependency>
+        <!--<dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-eureka</artifactId></dependency>-->
+        <dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-netflix-eureka-client</artifactId></dependency>
+        <!--<dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-hystrix</artifactId></dependency>-->
+        <dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-netflix-hystrix</artifactId></dependency>
+        <!--<dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-turbine</artifactId></dependency>-->
+        <dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-netflix-turbine</artifactId></dependency>
+
+        <dependency><groupId>org.springframework.security</groupId><artifactId>spring-security-test</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-test</artifactId><scope>test</scope></dependency>
     </dependencies>
     <!-- @formatter:on -->
 
     <dependencyManagement>
         <!-- @formatter:off -->
         <dependencies>
+            <dependency><groupId>cn.home1</groupId><artifactId>spring-cloud-multi-registration</artifactId><version>${service-discovery.version}</version></dependency>
+
             <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-cloud</artifactId><version>${spring.boot.admin.version}</version></dependency>
             <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui</artifactId><version>${spring.boot.admin.version}</version></dependency>
             <!--<dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui-activiti</artifactId><version>${spring.boot.admin.version}</version></dependency>
@@ -58,11 +125,6 @@
         <!-- @formatter:on -->
     </dependencyManagement>
 
-    <modules>
-        <module>docker-spring-boot-admin-server</module>
-        <module>sample-activity-application</module>
-    </modules>
-
     <profiles>
         <profile>
             <id>default-docker-image-prefix</id>
@@ -74,9 +136,10 @@
     </profiles>
 
     <properties>
-        <repositories.releases.updatePolicy>daily</repositories.releases.updatePolicy>
+        <repositories.releases.updatePolicy>never</repositories.releases.updatePolicy>
         <repositories.snapshots.updatePolicy>daily</repositories.snapshots.updatePolicy>
 
         <spring.boot.admin.version>2.1.4</spring.boot.admin.version>
+        <service-discovery.version>2.0.1-SNAPSHOT</service-discovery.version>
     </properties>
 </project>
