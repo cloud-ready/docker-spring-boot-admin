@@ -26,7 +26,7 @@ if [[ -z ${CI_OPT_GITHUB_SITE_PUBLISH+x} ]]; then CI_OPT_GITHUB_SITE_PUBLISH="fa
 if [[ -z ${CI_OPT_GITHUB_SITE_REPO_OWNER+x} ]]; then CI_OPT_GITHUB_SITE_REPO_OWNER="cloud-ready"; fi
 if [[ -z ${CI_OPT_GPG_KEYNAME+x} ]]; then CI_OPT_GPG_KEYNAME="59DBF10E"; fi
 if [[ -z ${CI_OPT_INFRASTRUCTURE+x} ]]; then CI_OPT_INFRASTRUCTURE="opensource"; fi
-#if [[ -z ${CI_OPT_MAVEN_BUILD_REPO+x} ]]; then CI_OPT_MAVEN_BUILD_REPO="${CI_INFRA_OPT_GIT_PREFIX}/ci-and-cd/maven-build/raw/v2.0.0"; fi
+#if [[ -z ${CI_OPT_MAVEN_BUILD_REPO+x} ]]; then CI_OPT_MAVEN_BUILD_REPO="${CI_INFRA_OPT_GIT_PREFIX}/ci-and-cd/maven-build/raw/develop"; fi
 if [[ -z ${CI_OPT_MAVEN_EFFECTIVE_POM+x} ]]; then CI_OPT_MAVEN_EFFECTIVE_POM="false"; fi
 if [[ -z ${CI_OPT_ORIGIN_REPO_SLUG+x} ]]; then if [[ -n "${CI_PROJECT_PATH}" ]]; then CI_OPT_ORIGIN_REPO_SLUG="gitlab-cloud-ready/docker-spring-boot-admin"; else CI_OPT_ORIGIN_REPO_SLUG="cloud-ready/docker-spring-boot-admin"; fi; fi
 if [[ -z ${CI_OPT_SITE+x} ]]; then CI_OPT_SITE="true"; fi

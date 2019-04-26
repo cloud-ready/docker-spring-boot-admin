@@ -11,7 +11,7 @@ services:
     - SPRING_APPLICATION_NAME=${SPRING_APPLICATION_NAME:-spring-boot-admin}
     #- SPRING_CLOUD_CLIENT_IPADDRESS=${SPRING_CLOUD_CLIENT_IPADDRESS}
     #- SPRING_CLOUD_CONSUL_ENABLED=${SPRING_CLOUD_CONSUL_ENABLED:-false}
-    - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-discovery,port_nonsecure}
+    - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-discovery}
     hostname: ${CONTAINER_HOST_NAME:-standalone.spring-boot-admin}
     network_mode: bridge
     ports:
