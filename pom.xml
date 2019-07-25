@@ -9,8 +9,8 @@
     <packaging>jar</packaging>
     <parent>
         <artifactId>cloud-ready-parent</artifactId>
-        <groupId>top.infra</groupId>
-        <version>2.0.4-SNAPSHOT</version>
+        <groupId>top.infra.cloud-ready</groupId>
+        <version>3.0.5-SNAPSHOT</version>
     </parent>
     <version>2.1.4-SNAPSHOT</version>
 
@@ -20,7 +20,7 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${spring-boot.version}</version>
+                    <version>${version.spring-boot}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -42,6 +42,7 @@
                 <configuration>
                     <classifier>exec</classifier>
                     <layout>ZIP</layout>
+                    <skip>${maven.packages.skip}</skip>
                 </configuration>
                 <executions>
                     <execution><id>build-info</id><goals><goal>build-info</goal></goals></execution>
@@ -61,12 +62,12 @@
     <!-- @formatter:off -->
     <dependencies>
         <dependency>
-            <groupId>cn.home1</groupId><artifactId>logback-gelf-config</artifactId>
+            <groupId>cn.home1.log-config</groupId><artifactId>logback-gelf-config</artifactId>
             <exclusions>
                 <!--<exclusion><artifactId>logbook-spring-boot-starter</artifactId><groupId>org.zalando</groupId></exclusion>-->
             </exclusions>
         </dependency>
-        <dependency><groupId>cn.home1</groupId><artifactId>spring-cloud-multi-registration</artifactId><scope>runtime</scope></dependency>
+        <dependency><groupId>top.infra.cloud-ready.service-discovery</groupId><artifactId>spring-cloud-multi-registration</artifactId><scope>runtime</scope></dependency>
 
         <dependency><groupId>com.hazelcast</groupId><artifactId>hazelcast</artifactId></dependency>
         <dependency><groupId>com.h2database</groupId><artifactId>h2</artifactId><scope>runtime</scope></dependency>
@@ -94,8 +95,6 @@
         <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-undertow</artifactId></dependency>
         <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency>
 
-        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-properties-migrator</artifactId><scope>runtime</scope></dependency>
-
         <dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-consul-all</artifactId></dependency>
         <!--<dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-eureka</artifactId></dependency>-->
         <dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-netflix-eureka-client</artifactId></dependency>
@@ -112,16 +111,16 @@
     <dependencyManagement>
         <!-- @formatter:off -->
         <dependencies>
-            <dependency><groupId>cn.home1</groupId><artifactId>spring-cloud-multi-registration</artifactId><version>${service-discovery.version}</version></dependency>
+            <dependency><groupId>top.infra.cloud-ready.service-discovery</groupId><artifactId>spring-cloud-multi-registration</artifactId><version>${version.service-discovery}</version></dependency>
 
-            <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-cloud</artifactId><version>${spring.boot.admin.version}</version></dependency>
-            <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui</artifactId><version>${spring.boot.admin.version}</version></dependency>
-            <!--<dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui-activiti</artifactId><version>${spring.boot.admin.version}</version></dependency>
-            <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui-hystrix</artifactId><version>${spring.boot.admin.version}</version></dependency>
-            <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui-login</artifactId><version>${spring.boot.admin.version}</version></dependency>
-            <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui-turbine</artifactId><version>${spring.boot.admin.version}</version></dependency>-->
-            <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-starter-client</artifactId><version>${spring.boot.admin.version}</version></dependency>
-            <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-starter-server</artifactId><version>${spring.boot.admin.version}</version></dependency>
+            <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-cloud</artifactId><version>${version.spring.boot.admin}</version></dependency>
+            <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui</artifactId><version>${version.spring.boot.admin}</version></dependency>
+            <!--<dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui-activiti</artifactId><version>${version.spring.boot.admin}</version></dependency>
+            <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui-hystrix</artifactId><version>${version.spring.boot.admin}</version></dependency>
+            <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui-login</artifactId><version>${version.spring.boot.admin}</version></dependency>
+            <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-server-ui-turbine</artifactId><version>${version.spring.boot.admin}</version></dependency>-->
+            <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-starter-client</artifactId><version>${version.spring.boot.admin}</version></dependency>
+            <dependency><groupId>de.codecentric</groupId><artifactId>spring-boot-admin-starter-server</artifactId><version>${version.spring.boot.admin}</version></dependency>
         </dependencies>
         <!-- @formatter:on -->
     </dependencyManagement>
@@ -137,7 +136,9 @@
     </profiles>
 
     <properties>
-        <spring.boot.admin.version>2.1.4</spring.boot.admin.version>
-        <service-discovery.version>2.0.1-SNAPSHOT</service-discovery.version>
+        <maven.packages.skip>false</maven.packages.skip>
+
+        <version.spring.boot.admin>2.1.4</version.spring.boot.admin>
+        <version.service-discovery>3.0.0-SNAPSHOT</version.service-discovery>
     </properties>
 </project>

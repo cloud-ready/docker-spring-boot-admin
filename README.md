@@ -26,6 +26,6 @@ Configuration via environment variables
 
 ```bash
 JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-11.0.2.jdk/Contents/Home" \
-    mvn -Dskip-artifacts=true -Dskip-quality=true \
-        help:active-profiles clean package spotbugs:spotbugs spotbugs:check pmd:pmd pmd:check
+    ./mvnw -Dmaven.javadoc.skip=true -Dmaven.source.skip=true -DgenerateReports=false \
+        help:active-profiles clean package
 ```
